@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.MainFragment">
+
+    <RelativeLayout
+        android:id="@+id/joke_btn_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/random_joke_btn"
+            android:layout_width="200dp"
+            android:layout_height="75dp"
+            android:layout_centerInParent="true"
+            android:text="Get A Joke"
+            android:textSize="24sp"/>
+    </RelativeLayout>
+    <FrameLayout
+        android:id="@+id/joke_list_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/joke_list_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/joke_list_enable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cornerRadius="0dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:alpha="0.2"
+        app:backgroundTint="@color/black"
+        android:text="More Jokes"
+        android:layout_alignParentBottom="true"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/joke_list_disable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cornerRadius="0dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:alpha="0.2"
+        app:backgroundTint="@color/black"
+        android:text="Back To Top"
+        android:layout_alignParentTop="true"
+        android:visibility="invisible"/>
+
+</RelativeLayout>
