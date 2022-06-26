@@ -3,37 +3,47 @@ package com.example.chunknorrisjokegallery.view
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.Scene
-import android.transition.TransitionManager
-import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.chunknorrisjokegallery.R
 import com.example.chunknorrisjokegallery.adapter.JokeAdapter
 import com.example.chunknorrisjokegallery.databinding.FragmentMainBinding
 import com.example.chunknorrisjokegallery.network.Results
 import com.example.chunknorrisjokegallery.utils.JokeBox
+import com.example.chunknorrisjokegallery.utils.fixSpecialChars
 import com.example.chunknorrisjokegallery.viewmodel.MainViewModel
 
 class MainFragment : Fragment() {
 
     private val binding by lazy { FragmentMainBinding.inflate(layoutInflater) }
-    private val adapter by lazy { JokeAdapter() }
+    private val jokeAdapter by lazy { JokeAdapter() }
     private val viewModel: MainViewModel by activityViewModels()
-    private val transition1 by lazy {
-        ChangeBounds().also { it.duration = 100L }
-    }
+
+    private var isJokeListFilled: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        binding.jokeListRv.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = jokeAdapter
+            addOnScrollListener(object: RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (!recyclerView.canScrollVertically(1))
+                        getMoreJokes()
+                }
+            })
+        }
+
         binding.randomJokeBtn.setOnClickListener {
-            viewModel.getRandomOne()
-            it.isEnabled = false
+            getOneJoke()
         }
 
         binding.jokeListEnable.setOnClickListener {
@@ -63,6 +73,9 @@ class MainFragment : Fragment() {
                         }
                     })
             }
+
+            // This includes the initial 20. The observer will handle the difference.
+            getMoreJokes()
         }
 
         binding.jokeListDisable.setOnClickListener {
@@ -92,6 +105,8 @@ class MainFragment : Fragment() {
                     .setDuration(300L)
                     .setListener(null)
             }
+
+            isJokeListFilled = false
         }
 
         viewModel.data.observe(viewLifecycleOwner) {
@@ -101,15 +116,22 @@ class MainFragment : Fragment() {
                     // Just a cheeky way to distinguish between
                     //      getRandomOne() and getRandomMultiple()
                     if (it.response.count() == 1) {
-                        JokeBox.Speak(requireContext(),
-                            it.response[0].joke)
-                        binding.randomJokeBtn.isEnabled = true
+                        JokeBox.speak(requireContext(),
+                            it.response[0].joke.fixSpecialChars())
+                        doneGettingOneJoke()
                     } else {
-                        adapter.updateList(it.response) }
+                        if (!isJokeListFilled) {
+                            jokeAdapter.updateList(it.response)
+                            isJokeListFilled = true
+                        } else jokeAdapter.addToList(it.response)
+                        doneGettingJokes()
+                    }
 
                 }
                 is Results.ERROR -> {
-                    binding.randomJokeBtn.isEnabled = true
+                    doneGettingOneJoke()
+                    doneGettingJokes()
+                    Toast.makeText(requireContext(), it.error.localizedMessage, 7000).show()
                 }
             }
         }
@@ -117,4 +139,32 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_fragment_menu, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    // These are for he never-ending joke list.
+    private fun getMoreJokes() {
+        viewModel.getRandomMultiple()
+        binding.jokeListLoading.visibility = View.VISIBLE
+    }
+    private fun doneGettingJokes() {
+        binding.jokeListLoading.visibility = View.GONE
+    }
+
+    // These are for the joke button.
+    private fun getOneJoke() {
+        binding.randomJokeBtn.text = getString(R.string.joke_btn_loading_label)
+        viewModel.getRandomOne()
+        binding.randomJokeBtn.isEnabled = false
+    }
+    private fun doneGettingOneJoke() {
+        binding.randomJokeBtn.text = getString(R.string.joke_btn_label)
+        binding.randomJokeBtn.isEnabled = true
+    }
 }

@@ -17,18 +17,26 @@
             android:layout_width="200dp"
             android:layout_height="75dp"
             android:layout_centerInParent="true"
-            android:text="Get A Joke"
+            android:text="@string/joke_btn_label"
             android:textSize="24sp"/>
     </RelativeLayout>
     <FrameLayout
         android:id="@+id/joke_list_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
         android:visibility="gone">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/joke_list_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+        <ProgressBar
+            android:id="@+id/joke_list_loading"
+            style="?android:attr/progressBarStyleSmall"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </FrameLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -41,6 +49,7 @@
         android:alpha="0.2"
         app:backgroundTint="@color/black"
         android:text="More Jokes"
+        android:textSize="32sp"
         android:layout_alignParentBottom="true"/>
 
     <com.google.android.material.button.MaterialButton
@@ -53,6 +62,7 @@
         android:alpha="0.2"
         app:backgroundTint="@color/black"
         android:text="Back To Top"
+        android:textSize="32sp"
         android:layout_alignParentTop="true"
         android:visibility="invisible"/>
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chunknorrisjokegallery.interfaces.RepositoryInterface
+import com.example.chunknorrisjokegallery.model.JokeConfig
 import com.example.chunknorrisjokegallery.network.Results
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -19,23 +20,27 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     private val _data: MutableLiveData<Results> = MutableLiveData()
     val data: LiveData<Results> get() = _data
-    private val safeViewModelScope by lazy {
-        viewModelScope + CoroutineExceptionHandler { _, throwable ->
-            throwable.localizedMessage?.let {  }
-        }
-    }
+    val jokeConfig: JokeConfig = JokeConfig()
 
     fun getRandomOne() {
-        safeViewModelScope.launch {
-            repository.getRandomOne()
+        viewModelScope.launch {
+            repository.getRandomOne(
+                exclude_category = jokeConfig.getExcludeList(),
+                first_name = jokeConfig.first_name,
+                last_name = jokeConfig.last_name
+            )
                 .flowOn(ioDispatcher)
                 .collect { _data.postValue(it) }
         }
     }
 
     fun getRandomMultiple() {
-        safeViewModelScope.launch {
-            repository.getRandomOne()
+        viewModelScope.launch {
+            repository.getRandomMultiple(
+                exclude_category = jokeConfig.getExcludeList(),
+                first_name = jokeConfig.first_name,
+                last_name = jokeConfig.last_name
+            )
                 .flowOn(ioDispatcher)
                 .collect { _data.postValue(it) }
         }

@@ -4,6 +4,14 @@ import com.example.chunknorrisjokegallery.network.Results
 import kotlinx.coroutines.flow.Flow
 
 interface RepositoryInterface {
-    fun getRandomOne(): Flow<Results>
-    fun getRandomMultiple(): Flow<Results>
+    fun getRandomOne(
+        first_name: String?,
+        last_name: String?,
+        exclude_category: List<String>?
+    ): Flow<Results>
+    fun getRandomMultiple(
+        first_name: String?,
+        last_name: String?,
+        exclude_category: List<String>?
+    ): Flow<Results>
 }

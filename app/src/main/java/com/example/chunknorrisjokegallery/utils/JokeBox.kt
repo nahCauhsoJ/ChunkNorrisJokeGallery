@@ -5,7 +5,7 @@ import android.content.Context
 
 class JokeBox {
     companion object {
-        fun Speak(context: Context, message: String) {
+        fun speak(context: Context, message: String) {
             AlertDialog.Builder(context)
                 .setTitle("Ok, so...")
                 .setMessage(message)

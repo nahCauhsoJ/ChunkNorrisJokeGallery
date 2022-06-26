@@ -1,5 +1,6 @@
 package com.example.chunknorrisjokegallery.network
 
+import com.example.chunknorrisjokegallery.model.MultipleJoke
 import com.example.chunknorrisjokegallery.model.SingleJoke
 import retrofit2.Response
 import retrofit2.http.GET
@@ -21,7 +22,7 @@ interface APIService {
         @Query("exclude") exclude_category: List<String>? = null,
         @Query("firstName") first_name: String? = null,
         @Query("lastName") last_name: String? = null
-    ): Response<SingleJoke>
+    ): Response<MultipleJoke>
 
     companion object {
         const val BASE_URL = "http://api.icndb.com/"

@@ -1,13 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditFragment">
+    tools:context=".view.EditFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
-</androidx.core.widget.NestedScrollView>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/edit_name_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:textSize="32sp"
+            android:textAlignment="center"
+            android:text="@string/edit_name_label"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
+                <TextView
+                    android:id="@+id/edit_first_name_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edit_first_name_label"
+                    android:layout_margin="10dp"
+                    android:textAlignment="center"/>
+                <EditText
+                    android:id="@+id/edit_first_name_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/edit_first_name_input_hint"
+                    android:textAlignment="center"
+                    android:inputType="textPersonName"
+                    android:importantForAutofill="no" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
+                <TextView
+                    android:id="@+id/edit_last_name_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edit_last_name_label"
+                    android:layout_margin="10dp"
+                    android:textAlignment="center"/>
+                <EditText
+                    android:id="@+id/edit_last_name_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/edit_last_name_input_hint"
+                    android:textAlignment="center"
+                    android:inputType="textPersonName"
+                    android:importantForAutofill="no" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/edit_filter_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/edit_filter_label"
+            android:textAlignment="center"
+            android:textSize="32sp"/>
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+
+            <CheckBox
+                android:id="@+id/edit_filter_explicit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_filter_explicit_label" />
+            <CheckBox
+                android:id="@+id/edit_filter_nerdy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_filter_nerdy_label" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/edit_note_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="40dp"
+            android:text="@string/edit_note_1"
+            android:textAlignment="center"
+            android:textSize="24sp"/>
+    </LinearLayout>
+</ScrollView>
