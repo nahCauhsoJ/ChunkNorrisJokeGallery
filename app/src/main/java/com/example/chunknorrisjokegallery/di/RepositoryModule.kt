@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.example.chunknorrisjokegallery.di
 
 import com.example.chunknorrisjokegallery.interfaces.RepositoryInterface

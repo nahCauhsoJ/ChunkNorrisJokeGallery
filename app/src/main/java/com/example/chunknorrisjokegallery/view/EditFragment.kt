@@ -21,6 +21,8 @@ class EditFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.needWipeViewData = true
+
         viewModel.jokeConfig.first_name?.let {
             binding.editFirstNameInput.setText(it)
         }
@@ -32,17 +34,16 @@ class EditFragment : Fragment() {
     }
 
     override fun onPause() {
-        viewModel.jokeConfig.first_name =
-            if (binding.editFirstNameInput.text.isNotBlank())
-                binding.editFirstNameInput.text.toString()
-            else
-                null
 
-        viewModel.jokeConfig.last_name =
-            if (binding.editLastNameInput.text.isNotBlank())
-                binding.editLastNameInput.text.toString()
-            else
-                null
+        binding.editFirstNameInput.text.apply {
+            viewModel.jokeConfig.first_name =
+                if (this.isNotBlank()) this.toString() else null
+        }
+
+        binding.editLastNameInput.text.apply {
+            viewModel.jokeConfig.last_name =
+                if (this.isNotBlank()) this.toString() else null
+        }
 
         viewModel.jokeConfig.no_explicit = binding.editFilterExplicit.isChecked
 

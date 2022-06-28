@@ -20,8 +20,9 @@ import com.example.chunknorrisjokegallery.viewmodel.MainViewModel
 class MainFragment : Fragment() {
 
     private val binding by lazy { FragmentMainBinding.inflate(layoutInflater) }
-    private val jokeAdapter by lazy { JokeAdapter() }
     private val viewModel: MainViewModel by activityViewModels()
+    private val jokeAdapter by lazy { JokeAdapter() }
+    private val rvLayoutManager: LinearLayoutManager = LinearLayoutManager(context)
 
     private var isJokeListFilled: Boolean = false
 
@@ -31,7 +32,7 @@ class MainFragment : Fragment() {
     ): View {
 
         binding.jokeListRv.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = rvLayoutManager
             adapter = jokeAdapter
             addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -76,6 +77,7 @@ class MainFragment : Fragment() {
 
             // This includes the initial 20. The observer will handle the difference.
             getMoreJokes()
+            viewModel.mainFragmentBundle.expanded = true
         }
 
         binding.jokeListDisable.setOnClickListener {
@@ -107,6 +109,7 @@ class MainFragment : Fragment() {
             }
 
             isJokeListFilled = false
+            viewModel.mainFragmentBundle.expanded = false
         }
 
         viewModel.data.observe(viewLifecycleOwner) {
@@ -122,11 +125,15 @@ class MainFragment : Fragment() {
                     } else {
                         if (!isJokeListFilled) {
                             jokeAdapter.updateList(it.response)
+                            viewModel.mainFragmentBundle.jokeList.clear()
+                            viewModel.mainFragmentBundle.jokeList.addAll(it.response)
                             isJokeListFilled = true
-                        } else jokeAdapter.addToList(it.response)
+                        } else {
+                            jokeAdapter.addToList(it.response)
+                            viewModel.mainFragmentBundle.jokeList.addAll(it.response)
+                        }
                         doneGettingJokes()
                     }
-
                 }
                 is Results.ERROR -> {
                     doneGettingOneJoke()
@@ -147,6 +154,49 @@ class MainFragment : Fragment() {
         inflater.inflate(R.menu.main_fragment_menu, menu)
         return super.onCreateOptionsMenu(menu, inflater)
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        viewModel.mainFragmentBundle.isConfigChange = true
+        viewModel.jokeRvLayoutManagerInstance =
+            rvLayoutManager.onSaveInstanceState()
+    }
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+        if (viewModel.mainFragmentBundle.isConfigChange) {
+            if (viewModel.mainFragmentBundle.expanded) {
+                binding.jokeListDisable.visibility = View.VISIBLE
+                binding.jokeListEnable.visibility = View.GONE
+                binding.jokeBtnLayout.visibility = View.GONE
+                binding.jokeListLayout.visibility = View.VISIBLE
+                viewModel.jokeRvLayoutManagerInstance?.let {
+                    rvLayoutManager.onRestoreInstanceState(it)
+                    jokeAdapter.addToList(viewModel.mainFragmentBundle.jokeList)
+                    isJokeListFilled = true
+                    viewModel.jokeRvLayoutManagerInstance = null
+                }
+            }
+
+            viewModel.mainFragmentBundle.isConfigChange = false
+        }
+    }
+
+    override fun onDestroyView() {
+        viewModel.onViewDestroyed()
+        super.onDestroyView()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (viewModel.needWipeViewData) {
+            isJokeListFilled = false
+            viewModel.wipeViewData()
+            if (viewModel.mainFragmentBundle.expanded) getMoreJokes()
+        }
+    }
+
+
 
     // These are for he never-ending joke list.
     private fun getMoreJokes() {
